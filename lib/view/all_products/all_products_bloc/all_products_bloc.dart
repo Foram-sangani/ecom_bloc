@@ -18,11 +18,11 @@ class AllProductsBloc extends Bloc<AllProductsEvent, AllProductsState> {
   AllProductsBloc() : super(AllProductsInitial()) {
     on<AllProductsEvent>((event, emit) {});
     on<FetchProductEvent>(fetchProductEvent);
-    on<ShowDialogEvent>(showDialogEvent);
+    on<ShowBottomSheetEvent>(showDialogEvent);
     on<FetchCategoryEvent>(fetchCategoryEvent);
   }
 
-  Future<void> showDialogEvent(ShowDialogEvent event, Emitter<AllProductsState> emit) async {
+  Future<void> showDialogEvent(ShowBottomSheetEvent event, Emitter<AllProductsState> emit) async {
     emit(ShowCategoryDialogState(category: category));
     emit(FetchProductSuccessState(products: products));
   }
@@ -30,9 +30,11 @@ class AllProductsBloc extends Bloc<AllProductsEvent, AllProductsState> {
   Future<void> fetchProductEvent(FetchProductEvent event, Emitter<AllProductsState> emit) async {
     emit(FetchProductLoadingState());
     try {
+      products.clear();
+
       var client = http.Client();
       var response = await client.get(
-        Uri.parse('https://fakestoreapi.com/products'),
+        Uri.parse(event.isCategory ? 'https://fakestoreapi.com/products/category/${event.category}' : 'https://fakestoreapi.com/products'),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -62,11 +64,9 @@ class AllProductsBloc extends Bloc<AllProductsEvent, AllProductsState> {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-
         List result = jsonDecode(response.body);
 
         category.addAll(result);
-
       } else {
         printOkStatus(response.body);
       }

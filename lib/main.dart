@@ -8,24 +8,27 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   await LocalStorage.readDataInfo();
-  runApp(const MyApp());
+  final GoRouter router = AppRoutes.returnRouter(true);
+  runApp(MyApp(
+    router: router,
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final GoRouter? router;
+  const MyApp({super.key, this.router});
 
   @override
   Widget build(BuildContext context) {
-    final GoRouter router = AppRoutes.returnRouter(true);
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      routeInformationParser: router.routeInformationParser,
-      routerDelegate: router.routerDelegate,
-      routeInformationProvider: router.routeInformationProvider,
+      routeInformationParser: router?.routeInformationParser,
+      routerDelegate: router?.routerDelegate,
+      routeInformationProvider: router?.routeInformationProvider,
     );
   }
 }

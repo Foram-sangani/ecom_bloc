@@ -153,7 +153,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: defaultPadding),
             child: Text(
-              'BUY NOW',
+              'ADD TO CART',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: AppColors.whiteColor,

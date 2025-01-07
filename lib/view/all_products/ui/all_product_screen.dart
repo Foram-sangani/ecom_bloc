@@ -1,4 +1,3 @@
-import 'package:ecommerce_app/utils/color_print.dart';
 import 'package:ecommerce_app/utils/res/app_colors.dart';
 import 'package:ecommerce_app/utils/common_utils.dart';
 import 'package:ecommerce_app/utils/routes/app_pages.dart';
@@ -23,11 +22,19 @@ class _AllProductScreenState extends State<AllProductScreen> {
   String searchText = '';
   String selectedCategory = '';
 
+  bool isFilterApplied = false;
+
   @override
   void initState() {
     super.initState();
-    context.read<AllProductsBloc>().add(FetchProductEvent());
+    context.read<AllProductsBloc>().add(FetchProductEvent(isCategory: false, category: selectedCategory));
     context.read<AllProductsBloc>().add(FetchCategoryEvent());
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    context.read<AllProductsBloc>().close();
   }
 
   @override
@@ -58,22 +65,32 @@ class _AllProductScreenState extends State<AllProductScreen> {
                 listenWhen: (previous, current) => current is AllProductActionState,
                 listener: (context, state) {
                   if (state is ShowCategoryDialogState) {
-                    showDialog(
+                    final blocContext = context; // Save the correct context
+                    showModalBottomSheet(
                       context: context,
-                      builder: (context) {
-                        return Dialog(
-                          elevation: 2,
-                          alignment: Alignment.center,
-                          child: CategorySelectionScreen(
-                            category: state.category,
-                            selected: selectedCategory,
-                            onChanged: (value) {
-                              setState(() {
-                                selectedCategory = value;
-                              });
-                              printOkStatus(selectedCategory);
-                            },
-                          ),
+                      builder: (newContext) {
+                        return CategorySelectionScreen(
+                          category: state.category,
+                          selected: selectedCategory,
+                          onChanged: (value) {
+                            isFilterApplied = true;
+                            selectedCategory = value;
+                            blocContext.read<AllProductsBloc>().add(
+                                  FetchProductEvent(
+                                    isCategory: true,
+                                    category: selectedCategory,
+                                  ),
+                                );
+                          },
+                          onReset: (value) {
+                            isFilterApplied = false;
+                            blocContext.read<AllProductsBloc>().add(
+                                  FetchProductEvent(
+                                    isCategory: false,
+                                    category: selectedCategory,
+                                  ),
+                                );
+                          },
                         );
                       },
                     );
@@ -81,7 +98,7 @@ class _AllProductScreenState extends State<AllProductScreen> {
                 },
                 builder: (context, state) {
                   return Container(
-                    padding: EdgeInsets.symmetric(horizontal: defaultPadding, vertical: defaultPadding).copyWith(bottom: defaultPadding / 1.5),
+                    padding: EdgeInsets.symmetric(horizontal: defaultPadding, vertical: defaultPadding).copyWith(bottom: defaultPadding / 2),
                     width: double.infinity,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -123,7 +140,7 @@ class _AllProductScreenState extends State<AllProductScreen> {
                         ),
                         InkWell(
                           onTap: () {
-                            context.read<AllProductsBloc>().add(ShowDialogEvent());
+                            context.read<AllProductsBloc>().add(ShowBottomSheetEvent());
                           },
                           child: Container(
                             height: 45,
@@ -133,10 +150,11 @@ class _AllProductScreenState extends State<AllProductScreen> {
                               borderRadius: BorderRadius.all(
                                 Radius.circular(defaultRadius),
                               ),
+                              color: isFilterApplied ? Theme.of(context).primaryColor : Colors.transparent,
                             ),
                             child: Icon(
                               Icons.sort,
-                              color: AppColors.greyColor,
+                              color: !isFilterApplied ? Theme.of(context).primaryColor : AppColors.whiteColor,
                             ),
                           ),
                         )
@@ -194,7 +212,7 @@ class _AllProductScreenState extends State<AllProductScreen> {
                             )
                           : Expanded(
                               child: ListView.builder(
-                                padding: EdgeInsets.all(defaultPadding),
+                                padding: EdgeInsets.all(defaultPadding).copyWith(top: defaultPadding / 2),
                                 physics: RangeMaintainingScrollPhysics(),
                                 keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                                 itemCount: state.products.where((item) => item.title.toString().toLowerCase().contains(searchText.toLowerCase())).toList().length,
@@ -224,8 +242,8 @@ class _AllProductScreenState extends State<AllProductScreen> {
                                         spacing: 15,
                                         children: [
                                           Container(
-                                            height: 100,
-                                            width: 100,
+                                            height: 110,
+                                            width: 110,
                                             decoration: BoxDecoration(
                                               color: AppColors.greyColor.withAlpha(50),
                                               borderRadius: BorderRadius.all(
