@@ -17,4 +17,6 @@ class AppColors {
   static Color greyColor = const Color(0xFF475467);
   static Color lightGreyTextColor = const Color(0xff667085);
   static Color lightGrey = const Color(0xFFD4D4D4);
+
+  static Color error = Colors.red;
 }

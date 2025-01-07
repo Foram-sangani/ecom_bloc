@@ -45,6 +45,7 @@ class _AllProductScreenState extends State<AllProductScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           elevation: 4,
           shadowColor: AppColors.greyColor,
           backgroundColor: Theme.of(context).primaryColor,
@@ -56,6 +57,17 @@ class _AllProductScreenState extends State<AllProductScreen> {
                   fontWeight: FontWeight.w500,
                 ),
           ),
+          actions: [
+            InkWell(
+              onTap: () {
+                GoRouter.of(context).pushNamed(AppPages.cartPage);
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right: defaultPadding / 1.5),
+                child: Icon(Icons.shopping_cart, color: AppColors.whiteColor),
+              ),
+            ),
+          ],
         ),
         body: SafeArea(
           child: Column(

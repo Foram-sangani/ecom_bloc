@@ -4,7 +4,6 @@ import 'package:get_storage/get_storage.dart';
 class Prefs {
   static const String userEmail = "USER_EMAIL";
   static const String userName = "USER_NAME";
-  static const String language = "LANGUAGE_CODE";
 }
 
 class LocalStorage {
@@ -15,8 +14,6 @@ class LocalStorage {
 
   static String userName = '';
   static String userEmail = '';
-
-  static String languageCode = 'en';
 
   static Future setUserData({required String email, required String name}) async {
     if (!isValEmpty(email)) {
@@ -29,17 +26,9 @@ class LocalStorage {
     }
   }
 
-  static Future setLanguageCode({required String code}) async {
-    if (!isValEmpty(code)) {
-      await storage.write(Prefs.language, code);
-      languageCode = storage.read(Prefs.language);
-    }
-  }
-
   static Future<void> readDataInfo() async {
     //* =-=-=-=-=-=-=-=> Read Info <-=-=-=-=-=-=-=- //
-
-    languageCode = storage.read(Prefs.language) ?? "en";
+    userEmail = storage.read(Prefs.userEmail);
   }
 
   static Future<void> clearDataInfo() async {}
