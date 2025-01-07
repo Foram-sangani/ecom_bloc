@@ -28,7 +28,7 @@ class LocalStorage {
 
   static Future<void> readDataInfo() async {
     //* =-=-=-=-=-=-=-=> Read Info <-=-=-=-=-=-=-=- //
-    userEmail = storage.read(Prefs.userEmail);
+    userEmail = storage.read(Prefs.userEmail) ?? '';
   }
 
   static Future<void> clearDataInfo() async {}
