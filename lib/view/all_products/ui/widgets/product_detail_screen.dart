@@ -44,6 +44,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ),
       ),
       body: BlocBuilder<ProductDetailBloc, ProductDetailState>(
+        buildWhen: (previous, current) => current != previous,
         builder: (context, state) {
           switch (state.runtimeType) {
             case const (ProductDetailsLoadingState):
@@ -73,6 +74,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    ///
+                    Text(
+                      'Rating : ${state.product.rating?.rate.toString() ?? ''}',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: AppColors.blackColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
+
                     Center(
                       child: Container(
                         margin: EdgeInsets.only(top: defaultPadding),
@@ -140,28 +150,66 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           }
         },
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(defaultPadding),
-        child: ElevatedButton(
-          style: ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
-            shape: WidgetStatePropertyAll(
-              ContinuousRectangleBorder(borderRadius: BorderRadius.circular(defaultRadius)),
-            ),
-          ),
-          onPressed: () {},
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: defaultPadding),
-            child: Text(
-              'ADD TO CART',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: AppColors.whiteColor,
-                    fontWeight: FontWeight.w500,
+      bottomNavigationBar: BlocConsumer<ProductDetailBloc, ProductDetailState>(
+        listenWhen: (previous, current) => current is ProductDetailActionState,
+        buildWhen: (previous, current) => current is! ProductDetailActionState,
+        listener: (context, state) {
+          if (state is AddToCartSuccessState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Product added to cart successfully'),
+              ),
+            );
+          }
+          if (state is AddToCartLoadingState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Please wait'),
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state is ProductDetailFetchSuccessState) {
+            return Padding(
+              padding: const EdgeInsets.all(defaultPadding),
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
+                  shape: WidgetStatePropertyAll(
+                    ContinuousRectangleBorder(borderRadius: BorderRadius.circular(defaultRadius)),
                   ),
-            ),
-          ),
-        ),
+                ),
+                onPressed: () {
+                  Map<String, dynamic> data = {
+                    'userId': '10',
+                    'date': DateTime.now().toString(),
+                    'products': [
+                      {
+                        'productId': state.product.id,
+                        'quantity': '1',
+                      }
+                    ],
+                  };
+
+                  context.read<ProductDetailBloc>().add(AddToCartEvent(cartData: data));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: defaultPadding),
+                  child: Text(
+                    'ADD TO CART',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: AppColors.whiteColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                ),
+              ),
+            );
+          }
+          return SizedBox();
+        },
       ),
     );
   }

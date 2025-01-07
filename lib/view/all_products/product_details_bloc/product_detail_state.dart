@@ -5,6 +5,8 @@ sealed class ProductDetailState {}
 
 final class ProductDetailInitial extends ProductDetailState {}
 
+abstract class ProductDetailActionState extends ProductDetailState {}
+
 class ProductDetailsLoadingState extends ProductDetailState {}
 
 class ProductDetailFetchSuccessState extends ProductDetailState {
@@ -14,3 +16,7 @@ class ProductDetailFetchSuccessState extends ProductDetailState {
 }
 
 class ProductDetailFetchErrorState extends ProductDetailState {}
+
+class AddToCartLoadingState extends ProductDetailActionState {}
+
+class AddToCartSuccessState extends ProductDetailActionState {}

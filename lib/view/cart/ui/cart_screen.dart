@@ -61,77 +61,89 @@ class _CartScreenState extends State<CartScreen> {
           ///
           BlocBuilder<CartBloc, CartState>(
             builder: (context, state) {
-              return Expanded(
-                child: ListView.separated(
-                  itemCount: 5,
-                  physics: RangeMaintainingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-                      child: SizedBox(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 15,
-                          children: [
-                            Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                color: AppColors.greyColor.withAlpha(50),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(defaultRadius),
-                                ),
-                                // image: DecorationImage(
-                                //   image: NetworkImage(item.image ?? ''),
-                                //   fit: BoxFit.cover,
-                                // ),
-                              ),
-                              child: /* item.image == null
-                              ? Center(
-                                  child: Icon(
-                                    Icons.image_not_supported_rounded,
-                                    size: 25,
-                                  ),
-                                )
-                              :*/
-                                  SizedBox.shrink(),
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'item.title.toString()',
-                                    maxLines: 2,
-                                    style: Theme.of(context).textTheme.titleMedium,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    'item.description.toString()',
-                                    maxLines: 3,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                          color: AppColors.lightGreyTextColor,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Text(
-                              '\${item.price}',
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: Theme.of(context).primaryColor,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                            ),
-                          ],
+              switch (state.runtimeType) {
+                case FetchCartProductLoadingState:
+                  return Expanded(
+                    child: SizedBox(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                  );
+
+                case FetchCartProductErrorState:
+                  return Expanded(
+                    child: SizedBox(
+                      child: Center(
+                        child: Text(
+                          'OOPS! Something went wrong..',
+                          style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    );
-                  },
-                  separatorBuilder: (context, index) => Divider(),
-                ),
-              );
+                    ),
+                  );
+
+                case FetchCartProductSuccessState:
+                  state as FetchCartProductSuccessState;
+                  return Expanded(
+                    child: ListView.separated(
+                      padding: EdgeInsets.only(bottom: defaultPadding),
+                      itemCount: state.cart.length,
+                      physics: RangeMaintainingScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        var item = state.cart[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+                          child: SizedBox(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              spacing: 15,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Product id : ${item.productId}',
+                                        maxLines: 2,
+                                        style: Theme.of(context).textTheme.titleMedium,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        'Quantity : ${item.quantity}',
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                              color: AppColors.lightGreyTextColor,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) => Divider(),
+                    ),
+                  );
+
+                ///
+                default:
+                  return Center(
+                    child: Text(
+                      'Product not found...',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  );
+              }
             },
           ),
 

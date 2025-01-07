@@ -8,3 +8,9 @@ class FetchProductDetailsEvent extends ProductDetailEvent {
 
   FetchProductDetailsEvent({required this.id});
 }
+
+class AddToCartEvent extends ProductDetailEvent {
+  final Map<String, dynamic> cartData;
+
+  AddToCartEvent({required this.cartData});
+}

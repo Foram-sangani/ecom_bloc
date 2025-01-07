@@ -8,7 +8,7 @@ final class CartInitial extends CartState {}
 class FetchedCartProducts extends CartState {}
 
 class FetchCartProductSuccessState extends CartState {
-  final List cart;
+  final List<CartProduct> cart;
 
   FetchCartProductSuccessState({required this.cart});
 }
