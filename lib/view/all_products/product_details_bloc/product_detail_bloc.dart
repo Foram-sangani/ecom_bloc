@@ -46,7 +46,6 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
 
   Future<void> addToCartEvent(AddToCartEvent event, Emitter<ProductDetailState> emit) async {
     emit(AddToCartLoadingState());
-    emit(ProductDetailFetchSuccessState(product: productsModel));
 
     try {
       var client = http.Client();
@@ -58,7 +57,6 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         printOkStatus(response.body);
         emit(AddToCartSuccessState());
-        emit(ProductDetailFetchSuccessState(product: productsModel));
       } else {
         printOkStatus(response.body);
       }

@@ -44,7 +44,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         ),
       ),
       body: BlocBuilder<ProductDetailBloc, ProductDetailState>(
-        buildWhen: (previous, current) => current != previous,
+        buildWhen: (previous, current) => current is ProductDetailsLoadingState || current is ProductDetailFetchSuccessState,
         builder: (context, state) {
           switch (state.runtimeType) {
             case const (ProductDetailsLoadingState):
@@ -161,13 +161,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
             );
           }
-          if (state is AddToCartLoadingState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Please wait'),
-              ),
-            );
-          }
         },
         builder: (context, state) {
           if (state is ProductDetailFetchSuccessState) {
@@ -203,6 +196,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           color: AppColors.whiteColor,
                           fontWeight: FontWeight.w500,
                         ),
+                  ),
+                ),
+              ),
+            );
+          }
+          if (state is AddToCartLoadingState) {
+            return Padding(
+              padding: const EdgeInsets.all(defaultPadding),
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColor),
+                  shape: WidgetStatePropertyAll(
+                    ContinuousRectangleBorder(borderRadius: BorderRadius.circular(defaultRadius)),
+                  ),
+                ),
+                onPressed: null,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: defaultPadding / 2),
+                  child: CircularProgressIndicator(
+                    color: AppColors.whiteColor,
                   ),
                 ),
               ),

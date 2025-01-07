@@ -17,6 +17,6 @@ class ProductDetailFetchSuccessState extends ProductDetailState {
 
 class ProductDetailFetchErrorState extends ProductDetailState {}
 
-class AddToCartLoadingState extends ProductDetailActionState {}
+class AddToCartLoadingState extends ProductDetailState {}
 
 class AddToCartSuccessState extends ProductDetailActionState {}

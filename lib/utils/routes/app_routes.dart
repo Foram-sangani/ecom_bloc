@@ -15,7 +15,7 @@ import '../../view/all_products/ui/all_product_screen.dart';
 class AppRoutes {
   static GoRouter returnRouter(bool isAuth) {
     GoRouter router = GoRouter(
-      initialLocation: LocalStorage.userEmail.isEmpty ? '/login' : '/all_product',
+      initialLocation: LocalStorage.userEmail.isNotEmpty ? '/login' : '/all_product',
       debugLogDiagnostics: true,
       routes: [
         ///
